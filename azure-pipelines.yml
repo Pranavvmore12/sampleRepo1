@@ -1,0 +1,27 @@
+trigger:
+  branches:
+    include:
+      - main   # run pipeline on commits to main
+
+pool:
+  name: agent-pool-1   # your self-hosted agent pool
+
+steps:
+- script: echo "Hello from agent-pool-1!"
+  displayName: 'Test agent connectivity'
+
+- script: |
+    echo "Installing dependencies..."
+    sudo apt-get update && sudo apt-get install -y curl
+  displayName: 'Install dependencies'
+
+- script: |
+    echo "Running a sample build step..."
+    mkdir -p output
+    echo "Build artifact created at $(date)" > output/artifact.txt
+  displayName: 'Build step'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'output'
+    ArtifactName: 'drop'
